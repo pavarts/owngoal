@@ -1,0 +1,224 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add any custom styles here */
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/*Styles for the tagline on the home page*/
+svg {
+  font-size: 14px;
+  font-weight: semi-bold;
+  /* text-transform: uppercase; */
+  fill: #ffffff;
+}
+
+#curve {
+  fill: none;
+}
+
+/* Styles for the button */
+
+@keyframes roll {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  100% {
+    transform: translateX(-118px) rotate(-360deg);
+  }
+}
+
+@keyframes roll-back {
+  0% {
+    transform: translateX(-130px) rotate(-360deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+/* Styles for the button */
+/* Modify the existing .find-a-bar-button styles */
+.find-a-bar-button {
+  @apply flex items-center justify-center relative text-lg font-bold text-white py-2 pr-4 pl-2 rounded cursor-pointer transition-colors ease-in-out duration-300;
+  overflow: hidden; /* Add this to hide overflowing content */
+}
+
+/* Modify the existing .soccer-ball styles */
+.find-a-bar-button {
+  @apply flex items-center justify-center relative text-lg font-semibold text-white py-2 px-4 rounded cursor-pointer transition-colors ease-in-out duration-300;
+  overflow: visible;
+  width: 155px; /* Adjust as needed */
+}
+
+.find-a-bar-button .soccer-ball {
+  width: 20px;
+  height: 20px;
+  background: url('../public/assets/soccerball.svg') no-repeat center center;
+  background-size: contain;
+  position: absolute;
+  right: 8px;
+  transition: right 0.5s ease-in-out;
+  z-index: 2;
+}
+
+.find-a-bar-button .right-arrow {
+  position: absolute;
+  right: -20px;
+  transition: right 0.5s ease-in-out;
+  font-size: 20px;
+  z-index: 1;
+  opacity: 0;
+}
+
+.find-a-bar-button:hover .right-arrow {
+  right: 10px;
+  opacity: 1;
+}
+
+.find-a-bar-button:hover {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+/* Remove the .rolling-back class for the right arrow */
+
+.find-a-bar-button:hover .soccer-ball {
+  animation: roll 0.5s forwards ease-in-out;
+}
+
+
+/* Modify the roll-back animation */
+.find-a-bar-button .soccer-ball.rolling-back {
+  animation: roll-back 0.5s forwards ease-in-out;
+}
+
+.find-a-bar-button .right-arrow.rolling-back {
+  right: -30px; /* Move back off-screen */
+  transition: right 0.5s ease-in-out;
+}
+
+/* Highlight row on hover */
+.highlight-row {
+  transition: background-color 0.3s ease;
+}
+
+.highlight-row:hover {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3));
+  font-weight: 600;
+  color: white
+}
+
+/* Add this to your index.css file */
+.highlight-row .find-a-bar-button,
+.highlight-row .find-a-bar-button .right-arrow {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.gradient-text-hover:hover {
+  @apply bg-gradient-to-r from-custom-blue to-lime-green;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* styles.css or a global CSS file */
+.underline-on-hover {
+  position: relative;
+}
+
+.underline-on-hover::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
+
+.underline-on-hover:hover::after {
+  width: 100%;
+}
+
+.team-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.team-logo-background {
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+  opacity: 0.3;
+}
+
+.versus-symbol {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20rem;
+  opacity: 0.3;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.glow-text {
+  text-shadow: rgb(255, 255, 255) 0px 0px 50px;
+}
+
+.team-name-highlight {
+  background: linear-gradient(180deg, rgba(255,255,255,0) 45%, rgba(255, 255, 255, 0.9) 0%);
+  background-size: 100% 200%;
+  background-position: 0 25%;
+  transition: background-position 0.3s ease;
+  display: inline;
+  padding: 0.2em 1;
+}
+
+.team-name-highlight:hover {
+  background-position: 0 100%;
+}
+
+.date-highlight {
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255, 255, 255, 0.5) 0%);
+  display: inline;
+  padding: 0.2em 1;
+}
+
+.editable-field {
+  background-color: #ffffff;
+  border: 1px solid #4299e1;
+}
+
+.noneditable-field {
+  background-color: #d6d6d6;
+  border: 1px solid #4299e1;
+}
+
+.header-gradient {
+  background: linear-gradient(to bottom, var(--header-start-color), var(--header-end-color));
+  --header-start-color: rgba(255, 255, 255, 0.4);
+  --header-end-color: rgba(147, 197, 253, 0.4);
+}
+
