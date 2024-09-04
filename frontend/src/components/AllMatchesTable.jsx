@@ -6,8 +6,8 @@ import { competitionColors } from '../config/competitionColors';
 import moment from 'moment-timezone';
 import Pagination from './Pagination.jsx';
 
-function formatDate(dateString) {
-  return moment.utc(dateString).local().format('ddd, M/D');
+function formatDate(dateString, timeString) {
+  return moment.utc(`${dateString}T${timeString}`).local().format('ddd, M/D');
 }
 
 function formatTime(dateString, timeString) {
@@ -130,7 +130,7 @@ const AllMatchesTable = ({ matches, currentPage, setCurrentPage, matchesPerPage 
                     )}
                   </div>
                 )}
-                {index === 4 && formatDate(match.date)}
+                {index === 4 && formatDate(match.date, match.time)}
                 {index === 5 && "@"}
                 {index === 6 && formatTime(match.date, match.time)}
                 {index === 7 && (

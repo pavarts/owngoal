@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionBadge from './CompetitionBadge';
 import { competitionColors } from '../config/competitionColors';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { FaSearch } from 'react-icons/fa';
 
 const SearchResults = ({ results, query, onClose, onSearch }) => {
@@ -82,7 +82,7 @@ const SearchResults = ({ results, query, onClose, onSearch }) => {
                           </div>
                         </div>
                         <div className="ml-2 text-sm text-gray-500 flex-shrink-0">
-                          {moment(match.date).format('MM/DD')} @ {moment(match.time, 'HH:mm:ss').format('h:mm A')}
+                        {moment.utc(`${match.date} ${match.time}`).local().format('M/D, h:mm A')}
                         </div>
                       </Link>
                     ))}

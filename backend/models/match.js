@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 module.exports = (sequelize, DataTypes) => {
     const Match = sequelize.define('Match', {
         a_team_id: {
@@ -29,7 +31,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TIME,
             allowNull: false
         },
-        location: DataTypes.STRING
+        location: DataTypes.STRING,
+        endTime: {
+            type: DataTypes.VIRTUAL,
+            get() {
+                const startDateTime = moment.utc(`${this.date} ${this.time}`);
+                return startDateTime.add(2, 'hours').toDate();
+            }
+        }
     });
 
     Match.associate = models => {
