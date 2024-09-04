@@ -17,7 +17,7 @@ const AllMatches = () => {
     const fetchData = async () => {
       try {
         const [matchesResponse, competitionsResponse] = await Promise.all([
-          axios.get('http://localhost:3000/matches'),
+          axios.get('http://localhost:3000/matches/upcoming'),
           axios.get('http://localhost:3000/competitions')
         ]);
         setMatches(matchesResponse.data);

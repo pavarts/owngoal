@@ -510,8 +510,8 @@ app.post('/matches', async (req, res) => {
     console.log('Received data:', req.body);
     const { competitionId, aTeamId, bTeamId, date, time, location } = req.body;
 
-    // Combine date and time, then convert to UTC
-    const localDateTime = moment(`${date}T${time}`);
+    // Combine date and time, specifying it's local time, then convert to UTC
+    const localDateTime = moment.tz(`${date}T${time}`, moment.tz.guess());
     const utcDateTime = localDateTime.utc();
 
     const newMatch = await db.Match.create({
@@ -533,7 +533,7 @@ app.post('/matches', async (req, res) => {
     });
 
     // Convert UTC time back to local time for the response
-    const localCreatedDateTime = moment.utc(`${createdMatch.date} ${createdMatch.time}`).local();
+    const localCreatedDateTime = moment.utc(`${createdMatch.date} ${createdMatch.time}`).tz(moment.tz.guess());
 
     // Format the response
     const matchDetails = {
@@ -566,23 +566,16 @@ app.put('/matches/:id', async (req, res) => {
       return res.status(404).send('Match not found');
     }
 
-    // Parse the date and time separately
-    const parsedDate = moment(date, 'YYYY-MM-DD');
-    const parsedTime = moment(time, 'HH:mm:ss');
-
-    if (!parsedDate.isValid() || !parsedTime.isValid()) {
-      return res.status(400).json({ error: 'Invalid date or time format' });
-    }
-
-    // Combine date and time
-    const combinedDateTime = moment(date + 'T' + time);
+    // Combine date and time, specifying it's local time, then convert to UTC
+    const localDateTime = moment.tz(`${date}T${time}`, moment.tz.guess());
+    const utcDateTime = localDateTime.utc();
 
     await match.update({
       competition_id: competitionId,
       a_team_id: aTeamId,
       b_team_id: bTeamId,
-      date: parsedDate.format('YYYY-MM-DD'),
-      time: parsedTime.format('HH:mm:ss'),
+      date: utcDateTime.format('YYYY-MM-DD'),
+      time: utcDateTime.format('HH:mm:ss'),
       location
     });
 
@@ -595,6 +588,9 @@ app.put('/matches/:id', async (req, res) => {
       ]
     });
 
+    // Convert UTC time back to local time for the response
+    const localUpdatedDateTime = moment.utc(`${updatedMatch.date} ${updatedMatch.time}`).tz(moment.tz.guess());
+
     // Format the response
     const matchDetails = {
       id: updatedMatch.id,
@@ -604,8 +600,8 @@ app.put('/matches/:id', async (req, res) => {
       a_team: updatedMatch.aTeam ? updatedMatch.aTeam.name : null,
       bTeamId: updatedMatch.b_team_id,
       b_team: updatedMatch.bTeam ? updatedMatch.bTeam.name : null,
-      date: updatedMatch.date,
-      time: updatedMatch.time,
+      date: localUpdatedDateTime.format('YYYY-MM-DD'),
+      time: localUpdatedDateTime.format('HH:mm:ss'),
       location: updatedMatch.location
     };
 
@@ -630,7 +626,94 @@ app.put('/matches/:id', async (req, res) => {
       res.status(500).send('Error deleting match.');
     }
   });
+// Fetch all UPCOMING and CURRENT matches with related data
+app.get('/matches/upcoming', async (req, res) => {
+  try {
+    const now = moment().utc();
+    const matches = await db.Match.findAll({
+      where: {
+        [Op.or]: [
+          { date: { [Op.gt]: now.format('YYYY-MM-DD') } },
+          {
+            [Op.and]: [
+              { date: now.format('YYYY-MM-DD') },
+              { time: { [Op.gte]: now.format('HH:mm:ss') } }
+            ]
+          }
+        ]
+      },
+      include: [
+        { model: db.Competition, as: 'competition' },
+        { model: db.Team, as: 'aTeam' },
+        { model: db.Team, as: 'bTeam' }
+      ],
+      order: [['date', 'ASC'], ['time', 'ASC']]
+    });
 
+
+    const matchesWithDetails = matches.map(match => {
+      return {
+        id: match.id,
+        competitionId: match.competition_id,
+        competition: match.competition ? match.competition.name : null,
+        aTeamId: match.a_team_id,
+        a_team_logo: match.aTeam ? match.aTeam.logo : null,
+        a_team: match.aTeam ? match.aTeam.name : null,
+        a_team_short_name: match.aTeam ? match.aTeam.short_name : null,
+        bTeamId: match.b_team_id,
+        b_team_logo: match.bTeam ? match.bTeam.logo : null,
+        b_team: match.bTeam ? match.bTeam.name : null,
+        b_team_short_name: match.bTeam ? match.bTeam.short_name : null,
+        date: match.date,
+        time: match.time,
+        location: match.location,
+      };
+    });
+
+    res.json(matchesWithDetails);
+  } catch (error) {
+    console.error('Failed to retrieve matches:', error);
+    res.status(500).send('Error retrieving matches from the database.');
+  }
+});
+
+// Fetch ALL matches with related data
+app.get('/matches/all', authenticateToken, async (req, res) => {
+  try {
+    const matches = await db.Match.findAll({
+      include: [
+        { model: db.Competition, as: 'competition' },
+        { model: db.Team, as: 'aTeam' },
+        { model: db.Team, as: 'bTeam' }
+      ],
+      order: [['date', 'DESC'], ['time', 'DESC']]
+    });
+
+    const matchesWithDetails = matches.map(match => {
+      return {
+        id: match.id,
+        competitionId: match.competition_id,
+        competition: match.competition ? match.competition.name : null,
+        aTeamId: match.a_team_id,
+        a_team: match.aTeam ? match.aTeam.name : null,
+        a_team_logo: match.aTeam ? match.aTeam.logo : null,
+        a_team_short_name: match.aTeam ? match.aTeam.short_name : null,
+        bTeamId: match.b_team_id,
+        b_team: match.bTeam ? match.bTeam.name : null,
+        b_team_logo: match.bTeam ? match.bTeam.logo : null,
+        b_team_short_name: match.bTeam ? match.bTeam.short_name : null,
+        date: match.date,
+        time: match.time,
+        location: match.location,
+      };
+    });
+
+    res.json(matchesWithDetails);
+  } catch (error) {
+    console.error('Failed to retrieve matches:', error);
+    res.status(500).send('Error retrieving matches from the database.');
+  }
+});
 
 //Get information on a specific match
 app.get('/matches/:id', async (req, res) => {
@@ -677,42 +760,6 @@ app.get('/matches/:id', async (req, res) => {
   }
 });
 
-// Fetch all matches with related data
-app.get('/matches', async (req, res) => {
-  try {
-    const matches = await db.Match.findAll({
-      include: [
-        { model: db.Competition, as: 'competition' },
-        { model: db.Team, as: 'aTeam' },
-        { model: db.Team, as: 'bTeam' }
-      ]
-    });
-
-    const matchesWithDetails = matches.map(match => {
-      return {
-        id: match.id,
-        competitionId: match.competition_id,
-        competition: match.competition ? match.competition.name : null,
-        aTeamId: match.a_team_id,
-        a_team_logo: match.aTeam ? match.aTeam.logo : null,
-        a_team: match.aTeam ? match.aTeam.name : null,
-        a_team_short_name: match.aTeam ? match.aTeam.short_name : null,
-        bTeamId: match.b_team_id,
-        b_team_logo: match.bTeam ? match.bTeam.logo : null,
-        b_team: match.bTeam ? match.bTeam.name : null,
-        b_team_short_name: match.bTeam ? match.bTeam.short_name : null,
-        date: match.date,
-        time: match.time,
-        location: match.location,
-      };
-    });
-
-    res.json(matchesWithDetails);
-  } catch (error) {
-    console.error('Failed to retrieve matches:', error);
-    res.status(500).send('Error retrieving matches from the database.');
-  }
-});
 
 
 //endpoint for getting bar data for a specific match
@@ -749,6 +796,61 @@ app.get('/matches/:id/bars', async (req, res) => { //defines the GET endpoint in
       res.status(500).send('Error retrieving bars from the database.');
     }
   });
+
+
+//endpoint for past events
+app.get('/bars/:place_id/past-events', authenticateToken, async (req, res) => {
+  try {
+    const bar = await db.Bar.findOne({ where: { place_id: req.params.place_id } });
+    if (!bar) {
+      return res.status(404).send('Bar not found');
+    }
+    const now = new Date();
+    const pastEvents = await db.Event.findAll({
+      where: { 
+        bar_id: bar.id,
+        '$Match.endTime$': {
+          [Op.lt]: now
+        }
+      },
+      include: [
+        {
+          model: db.Match,
+          include: [
+            { model: db.Team, as: 'aTeam' },
+            { model: db.Team, as: 'bTeam' },
+            { model: db.Competition, as: 'competition' }
+          ]
+        }
+      ],
+      order: [
+        [db.Match, 'date', 'DESC'],
+        [db.Match, 'time', 'DESC']
+      ]
+    });
+
+    const pastEventsWithDetails = pastEvents.map(event => ({
+      id: event.id,
+      a_team_logo: event.Match.aTeam.logo,
+      b_team_logo: event.Match.bTeam.logo,
+      a_team: event.Match.aTeam.name,
+      b_team: event.Match.bTeam.name,
+      match: `${event.Match.aTeam.name} vs ${event.Match.bTeam.name}`,
+      date: event.Match.date,
+      time: event.Match.time,
+      sound: event.sound,
+      earlyOpening: event.earlyOpening,
+      openingTime: event.openingTime,
+      competition: event.Match.competition ? event.Match.competition.name : null,
+      match_id: event.Match.id
+    }));
+
+    res.json(pastEventsWithDetails);
+  } catch (error) {
+    console.error('Failed to retrieve past events:', error);
+    res.status(500).send('Error retrieving past events.');
+  }
+});
 
 
 // * ALL COMPETITIONS endpoints *****************************************************************************************************************************************************************************
@@ -957,6 +1059,8 @@ app.get('/search', async (req, res) => {
     if (!query) {
       return res.status(400).json({ error: 'Search query is required' });
     }
+  
+    const now = moment().utc(); // Define 'now' here
 
     // Search in Teams
     const teams = await db.Team.findAll({
@@ -977,9 +1081,24 @@ app.get('/search', async (req, res) => {
         { model: db.Competition, as: 'competition' }
       ],
       where: {
-        [db.Sequelize.Op.or]: [
-          { '$aTeam.name$': { [db.Sequelize.Op.iLike]: `%${query}%` } },
-          { '$bTeam.name$': { [db.Sequelize.Op.iLike]: `%${query}%` } }
+        [db.Sequelize.Op.and]: [
+          {
+            [db.Sequelize.Op.or]: [
+              { '$aTeam.name$': { [db.Sequelize.Op.iLike]: `%${query}%` } },
+              { '$bTeam.name$': { [db.Sequelize.Op.iLike]: `%${query}%` } }
+            ]
+          },
+          {
+            [db.Sequelize.Op.or]: [
+              { date: { [db.Sequelize.Op.gt]: now.format('YYYY-MM-DD') } },
+              {
+                [db.Sequelize.Op.and]: [
+                  { date: now.format('YYYY-MM-DD') },
+                  { time: { [db.Sequelize.Op.gte]: now.format('HH:mm:ss') } }
+                ]
+              }
+            ]
+          }
         ]
       },
       limit: 5

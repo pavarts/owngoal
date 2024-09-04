@@ -3,6 +3,7 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import FilterInput from './FilterInput';
 import moment from 'moment-timezone';
+import StatusFilter from '../StatusFilter';
 
 const getAuthHeader = () => {
   const token = localStorage.getItem('token');
@@ -29,15 +30,26 @@ const Matches = () => {
   const [sortConfig, setSortConfig] = useState(null);
   const [filter, setFilter] = useState({ competitionId: '', teamName: '' });
   const [selectedTeamA, setSelectedTeamA] = useState(null);
+  const [statusFilter, setStatusFilter] = useState({
+    upcoming: true,
+    current: true,
+    completed: false
+  });
 
   useEffect(() => {
     fetchMatches();
     fetchCompetitions();
   }, []);
+  
+  useEffect(() => {
+    if (matches.length > 0) {
+      applyFilter(filter, statusFilter);
+    }
+  }, [matches, filter, statusFilter]);
 
   const fetchMatches = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/matches', getAuthHeader());
+      const response = await axios.get('http://localhost:3000/matches/all', getAuthHeader());
       setMatches(response.data);
       setFilteredMatches(response.data);
     } catch (error) {
@@ -61,6 +73,16 @@ const Matches = () => {
     } catch (error) {
       console.error('Error fetching teams for competition:', error);
     }
+  };
+
+  const getMatchStatus = (match) => {
+    const now = moment();
+    const startTime = moment(`${match.date}T${match.time}`);
+    const endTime = moment(`${match.date}T${match.time}`).add(2, 'hours');
+  
+    if (now.isBefore(startTime)) return 'Upcoming';
+    if (now.isBetween(startTime, endTime)) return 'Current';
+    return 'Completed';
   };
 
   const openModal = (match = null) => {
@@ -128,8 +150,8 @@ const Matches = () => {
       competitionId: newMatch.competitionId ? parseInt(newMatch.competitionId, 10) : null,
       aTeamId: newMatch.aTeamId ? parseInt(newMatch.aTeamId, 10) : null,
       bTeamId: newMatch.bTeamId ? parseInt(newMatch.bTeamId, 10) : null,
-      date: utcDateTime.format('YYYY-MM-DD'),
-      time: utcDateTime.format('HH:mm:ss'),
+      date: newMatch.date,
+      time: newMatch.time,
       location: newMatch.location
     };
   
@@ -179,32 +201,30 @@ const Matches = () => {
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilter({ ...filter, [name]: value });
-    applyFilter({ ...filter, [name]: value });
+    const newFilter = { ...filter, [name]: value };
+    setFilter(newFilter);
+    applyFilter(newFilter, statusFilter);
   };
 
-  const applyFilter = (filter) => {
+  const applyFilter = (filter, statusFilter) => {
     const filtered = matches.filter((match) => {
-      console.log('Match:', match); // Debug log to check match object
-      console.log('Filter:', filter); // Debug log to check filter object
-  
-      // Check if the competition's name matches the filter (case-insensitive)
       const competitionMatch = !filter.competitionId || (match.competition && match.competition.toLowerCase().includes(filter.competitionId.toLowerCase()));
-  
-      // Check if either Team A's name or Team B's name matches the filter (case-insensitive)
       const teamMatch = !filter.teamName || (match.a_team && match.a_team.toLowerCase().includes(filter.teamName.toLowerCase())) || (match.b_team && match.b_team.toLowerCase().includes(filter.teamName.toLowerCase()));
+      
+      const now = moment();
+      const matchDateTime = moment.utc(`${match.date}T${match.time}`);
+      const status = matchDateTime.isAfter(now) ? 'upcoming' : 
+                     (matchDateTime.isSameOrBefore(now) && matchDateTime.add(2, 'hours').isAfter(now)) ? 'current' : 
+                     'completed';
+      
+      const statusMatch = statusFilter[status];
   
-      // Log the results of each match check
-      console.log('Matches:', { competitionMatch, teamMatch }); // Debug log
-  
-      // Return true if all filter criteria match
-      return competitionMatch && teamMatch;
+      return competitionMatch && teamMatch && statusMatch;
     });
   
-    // Update the filteredMatches state with the filtered matches
     setFilteredMatches(filtered);
   };
-  
+
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Matches</h2>
@@ -227,6 +247,14 @@ const Matches = () => {
           value={filter.teamName}
           onChange={handleFilterChange}
         />
+      <div className="ml-4">
+          <StatusFilter 
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            applyFilter={applyFilter}
+            filter={filter}
+          />
+        </div>
       </div>
       <div className="overflow-x-auto mb-4">
         <table className="min-w-full bg-white">
@@ -237,6 +265,7 @@ const Matches = () => {
               <th className="py-2 px-4 border cursor-pointer" onClick={() => handleSort('competition')}>Competition</th>
               <th className="py-2 px-4 border cursor-pointer" onClick={() => handleSort('aTeam')}>Team A</th>
               <th className="py-2 px-4 border cursor-pointer" onClick={() => handleSort('bTeam')}>Team B</th>
+              <th className="py-2 px-4 border cursor-pointer" onClick={() => handleSort('status')}>Status</th>
               <th className="py-2 px-4 border cursor-pointer" onClick={() => handleSort('date')}>Date</th>
               <th className="py-2 px-4 border cursor-pointer" onClick={() => handleSort('time')}>Time</th>
               <th className="py-2 px-4 border cursor-pointer" onClick={() => handleSort('location')}>Location</th>
@@ -261,6 +290,7 @@ const Matches = () => {
                 </td>
                 <td className="py-2 px-4 border">{match.id}</td>
                 <td className="py-2 px-4 border">{match.competition}</td>
+                <td className="py-2 px-4 border">{getMatchStatus(match)}</td>
                 <td className="py-2 px-4 border">{match.a_team}</td>
                 <td className="py-2 px-4 border">{match.b_team}</td>
                 <td className="py-2 px-4 border">{moment(match.date).format('YYYY-MM-DD')}</td>   
