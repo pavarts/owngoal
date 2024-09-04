@@ -4,8 +4,8 @@ import moment from 'moment-timezone';
 import { competitionColors } from '../config/competitionColors';
 import { Link } from 'react-router-dom';
 
-function formatDate(dateString) {
-    return moment(dateString).format('dddd, MMMM Do, YYYY');
+function formatDate(dateString, timeString) {
+    return moment.utc(`${dateString}T${timeString}`).local().format('dddd, MMMM Do, YYYY');
   }
   
   function formatTime(dateString, timeString) {
@@ -77,7 +77,7 @@ const HeaderInfo = ({ match }) => {
                 </div>
             </div>
             <p className="text-center text-lg mt-8 relative z-10 text-white  inline-block">
-                <span className=' font-semibold'>{formatDate(match.date)} </span> 
+                <span className=' font-semibold'>{formatDate(match.date, match.time)} </span> 
                 <span className='text-black font-bold text-xl'>@</span>
                 <span className=' font-semibold '> {formatTime(match.date, match.time)}</span>
             </p>

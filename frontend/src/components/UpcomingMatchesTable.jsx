@@ -5,8 +5,8 @@ import CompetitionBadge from './CompetitionBadge.jsx';
 import { competitionColors } from '../config/competitionColors';
 import moment from 'moment-timezone';
 
-function formatDate(dateString) {
-  return moment.utc(dateString).local().format('ddd, M/D');
+function formatDate(dateString, timeString) {
+  return moment.utc(`${dateString}T${timeString}`).local().format('ddd, M/D');
 }
 
 function formatTime(dateString, timeString) {
@@ -18,9 +18,10 @@ const UpcomingMatchesTable = ({ teamId }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:3000/matches')
+    fetch('http://localhost:3000/matches/upcoming')
       .then(response => response.json())
       .then(data => {
+        console.log('Received match data:', data);
         let filteredMatches = teamId
           ? data.filter(match => match.aTeamId === parseInt(teamId) || match.bTeamId === parseInt(teamId))
           : data;
@@ -133,7 +134,7 @@ const UpcomingMatchesTable = ({ teamId }) => {
                     )}
                   </div>
                 )}
-                {index === 4 && formatDate(match.date)}
+                {index === 4 && formatDate(match.date, match.time)}
                 {index === 5 && "@"}
                 {index === 6 && formatTime(match.date, match.time)}
                 {index === 7 && (
