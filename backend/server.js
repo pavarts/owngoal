@@ -974,6 +974,75 @@ app.get('/bars/:place_id/events', async (req, res) => {
   }
 });
 
+// GET current and upcoming events for a specific bar
+app.get('/bars/:place_id/events/upcoming', async (req, res) => {
+  try {
+    const bar = await db.Bar.findOne({ where: { place_id: req.params.place_id } });
+    if (!bar) {
+      return res.status(404).send('Bar not found');
+    }
+    const now = moment().utc();
+    const upcomingEvents = await db.Event.findAll({
+      where: { 
+        bar_id: bar.id,
+        [Op.or]: [
+          { '$Match.date$': { [Op.gt]: now.format('YYYY-MM-DD') } },
+          {
+            [Op.and]: [
+              { '$Match.date$': now.format('YYYY-MM-DD') },
+              db.sequelize.where(
+                db.sequelize.fn('CONCAT', 
+                  db.sequelize.col('Match.date'), 
+                  ' ', 
+                  db.sequelize.col('Match.time')
+                ),
+                {
+                  [Op.gte]: now.subtract(2, 'hours').format('YYYY-MM-DD HH:mm:ss')
+                }
+              )
+            ]
+          }
+        ]
+      },
+      include: [
+        {
+          model: db.Match,
+          include: [
+            { model: db.Team, as: 'aTeam' },
+            { model: db.Team, as: 'bTeam' },
+            { model: db.Competition, as: 'competition' }
+          ]
+        }
+      ],
+      order: [
+        [db.Match, 'date', 'ASC'],
+        [db.Match, 'time', 'ASC']
+      ]
+    });
+
+    const upcomingEventsWithDetails = upcomingEvents.map(event => ({
+      id: event.id,
+      a_team_logo: event.Match.aTeam.logo,
+      b_team_logo: event.Match.bTeam.logo,
+      a_team: event.Match.aTeam.name,
+      b_team: event.Match.bTeam.name,
+      match: `${event.Match.aTeam.name} vs ${event.Match.bTeam.name}`,
+      date: event.Match.date,
+      time: event.Match.time,
+      sound: event.sound,
+      earlyOpening: event.earlyOpening,
+      openingTime: event.openingTime,
+      competition: event.Match.competition ? event.Match.competition.name : null,
+      match_id: event.Match.id
+    }));
+
+    res.json(upcomingEventsWithDetails);
+  } catch (error) {
+    console.error('Failed to retrieve upcoming events:', error);
+    res.status(500).send('Error retrieving upcoming events.');
+  }
+});
+
 // POST endpoint for creating a new event
 app.post('/events', async (req, res) => {
   try {
@@ -1024,11 +1093,23 @@ app.post('/bars/:place_id/events', async (req, res) => {
 // Update an existing event
 app.put('/events/:id', async (req, res) => {
   try {
-    const event = await db.Event.findByPk(req.params.id);
+    const eventId = parseInt(req.params.id, 10);
+    if (isNaN(eventId)) {
+      return res.status(400).send('Invalid event ID');
+    }
+
+    const event = await db.Event.findByPk(eventId);
     if (!event) {
       return res.status(404).send('Event not found');
     }
-    await event.update(req.body);
+
+    const { sound, earlyOpening, openingTime } = req.body;
+    await event.update({ 
+      sound, 
+      earlyOpening, 
+      openingTime: earlyOpening ? openingTime : null 
+    });
+
     res.json(event);
   } catch (error) {
     console.error('Failed to update event:', error);

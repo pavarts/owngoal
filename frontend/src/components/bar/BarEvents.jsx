@@ -52,7 +52,7 @@ const BarEvents = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:3000/bars/${barPlaceId}/events`, {
+      const response = await axios.get(`http://localhost:3000/bars/${barPlaceId}/events/upcoming`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEvents(response.data);
@@ -68,7 +68,7 @@ const BarEvents = () => {
   }, [barPlaceId]);
   const fetchMatches = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/matches');
+      const response = await axios.get('http://localhost:3000/matches/upcoming');
       setMatches(response.data.sort((a, b) => new Date(a.date) - new Date(b.date)));
     } catch (error) {
       console.error('Error fetching matches:', error);
@@ -120,7 +120,11 @@ const BarEvents = () => {
   const confirmEditEvent = async (updatedEvent) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:3000/events/${updatedEvent.id}`, updatedEvent, {
+      // Make sure we're sending the event id
+      await axios.put(`http://localhost:3000/events/${currentEvent.id}`, {
+        ...updatedEvent,
+        id: currentEvent.id
+      }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchEvents();
@@ -203,7 +207,7 @@ const BarEvents = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-4xl font-bold text-white mb-4 mt-6">Bar Events</h1>
+      <h1 className="text-4xl font-bold text-white mb-4 mt-6">My Events</h1>
       <hr className="mb-8 border-gray-200" />
       
       <div className="mb-4 flex justify-center space-x-4">

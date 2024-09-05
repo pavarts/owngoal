@@ -6,6 +6,13 @@ import CompetitionBadge from '../CompetitionBadge';
 import { competitionColors } from '../../config/competitionColors';
 
 const AllMatchesTable = ({ matches, events, handleAddEvent, renderMatch }) => {
+  const formatDate = (dateString, timeString) => {
+    return moment.utc(`${dateString}T${timeString}`).local().format('ddd, M/D');
+  };
+
+  const formatTime = (dateString, timeString) => {
+    return moment.utc(`${dateString}T${timeString}`).local().format('h:mm A');
+  };
   return (
     <div className="bg-blue-300 bg-opacity-40 rounded-lg overflow-hidden">
       <table className="min-w-full">
@@ -30,7 +37,7 @@ const AllMatchesTable = ({ matches, events, handleAddEvent, renderMatch }) => {
                 {renderMatch(match.a_team, match.a_team_logo, match.b_team, match.b_team_logo)}
               </td>
               <td className="py-2 px-4 text-center">
-                {moment(match.date).format('ddd, M/D')} @ {moment(match.time, 'HH:mm:ss').format('h:mm A')}
+              {formatDate(match.date, match.time)} @ {formatTime(match.date, match.time)}
               </td>
               <td className="py-2 px-4 text-center">
                 <div className="flex justify-center items-center">
