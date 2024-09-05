@@ -6,6 +6,16 @@ import CompetitionBadge from '../CompetitionBadge';
 import { competitionColors } from '../../config/competitionColors';
 
 const UpcomingEventsTable = ({ events, handleEditEvent, handleDeleteEvent, renderMatch }) => {
+  
+  const formatDate = (dateString, timeString) => {
+    return moment.utc(`${dateString}T${timeString}`).local().format('ddd, M/D');
+  };
+
+  const formatTime = (dateString, timeString) => {
+    return moment.utc(`${dateString}T${timeString}`).local().format('h:mm A');
+  };
+
+  
   // Sort events by date and time
   const sortedEvents = [...events].sort((a, b) => {
     const dateTimeA = moment(`${a.date} ${a.time}`);
@@ -39,7 +49,7 @@ const UpcomingEventsTable = ({ events, handleEditEvent, handleDeleteEvent, rende
                 {renderMatch(event.a_team, event.a_team_logo, event.b_team, event.b_team_logo)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-center">
-                {moment(event.date).format('ddd, M/D')} @ {moment(event.time, 'HH:mm:ss').format('h:mm A')}
+                {formatDate(event.date, event.time)} @ {formatTime(event.date, event.time)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-center">{event.sound ? 'On' : 'Off'}</td>
               <td className="px-6 py-4 whitespace-nowrap text-center">
