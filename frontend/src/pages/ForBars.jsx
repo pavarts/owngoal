@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ForBars = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ const ForBars = () => {
     email: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,38 +36,56 @@ const ForBars = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-white mb-8 text-center">Join Our Soccer Community</h1>
+    <div className="container mx-auto px-4 py-12">
+      <h1 className="text-5xl font-normal text-white mb-12 text-center">
+        <i>Tired of showing games to an empty bar?</i>
+      </h1>
       <div className="flex flex-wrap -mx-4">
         {/* Left side - Information */}
-        <div className="w-full md:w-1/2 px-4 mb-8 md:mb-0">
-          <div className="text-white">
-            <h2 className="text-2xl font-semibold mb-4">Why Join Us?</h2>
-            <ul className="list-disc list-inside space-y-2">
-              <li>Connect with passionate soccer fans in your area</li>
-              <li>Increase foot traffic and sales during match days</li>
-              <li>Be part of a growing community of soccer-friendly establishments</li>
-              <li>Free registration during our beta phase</li>
+        <div className="w-full md:w-1/2 px-4 mb-12 md:mb-0">
+          <div className="text-white bg-blue-900 bg-opacity-30 backdrop-filter backdrop-blur-sm p-8 rounded-lg shadow-lg">
+            <h2 className="text-3xl font-bold mb-6 text-lime-green">Join us!</h2>
+            <ul className="space-y-4 text-lg">
+              <li className="flex items-start">
+                <span className="text-2xl mr-2">⚽</span>
+                <span>Easily advertise soccer matches your bar is showing</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-2xl mr-2">💰</span>
+                <span>Increase foot traffic and sales during match days</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-2xl mr-2">🍻</span>
+                <span>Connect with passionate soccer fans in your area</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-2xl mr-2">🏟️</span>
+                <span>Be part of a growing community of soccer-friendly establishments</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-2xl mr-2">🫶🏻</span>
+                <span>Free registration during our beta phase</span>
+              </li>
             </ul>
-            <p className="mt-4">
-              By joining our platform, you're creating a space where soccer fans can come together, 
-              enjoy their favorite matches, and support local businesses like yours. It's a win-win 
-              for everyone involved!
+            <p className="mt-6 text-xl font-semibold">
+              With OwnGoal, you're creating a space where soccer fans can come together, 
+              enjoy their favorite matches, and support local businesses like yours. <br />
+              <span className="text-lime-green"> It's a win-win for everyone!</span>
             </p>
           </div>
         </div>
 
         {/* Right side - Form */}
         <div className="w-full md:w-1/2 px-4">
-          <div className="bg-blue-900 bg-opacity-30 backdrop-filter backdrop-blur-sm p-6 rounded-lg">
+          <div className="bg-blue-900 bg-opacity-30 backdrop-filter backdrop-blur-sm p-8 rounded-lg shadow-lg">
             {isSubmitted ? (
               <div className="text-white text-center">
-                <h2 className="text-2xl font-semibold mb-4">Thank You for Signing Up!</h2>
-                <p>We've received your information and will be in touch soon to set up your account.</p>
+                <h2 className="text-3xl font-bold mb-4">Thank You for Signing Up!</h2>
+                <p className="text-xl">We've received your information and will be in touch soon to set up your account.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit}>
-                <h2 className="text-2xl font-semibold mb-4 text-white">Register Your Bar</h2>
+                <h2 className="text-3xl font-bold mb-6 text-white">Register Your Bar</h2>
                 <div className="mb-4">
                   <label htmlFor="barName" className="block text-white mb-2">Bar Name</label>
                   <input
@@ -108,7 +128,7 @@ const ForBars = () => {
                     </select>
                   </div>
                 </div>
-                <div className="mb-4">
+                <div className="mb-6">
                   <label htmlFor="email" className="block text-white mb-2">Email</label>
                   <input
                     type="email"
@@ -120,13 +140,24 @@ const ForBars = () => {
                     className="w-full px-3 py-2 bg-blue-800 bg-opacity-50 text-white rounded"
                   />
                 </div>
-                <button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                <button type="submit" className="w-full bg-lime-green hover:bg-lime-600 text-blue-900 font-bold py-3 px-4 rounded transition duration-300">
                   Submit
                 </button>
               </form>
             )}
           </div>
         </div>
+      </div>
+
+      {/* Login CTA */}
+      <div className="mt-16 text-center">
+        <h3 className="text-2xl font-semibold text-white mb-4">Already a member?</h3>
+        <button 
+          onClick={() => navigate('/login')} 
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full text-xl transition duration-300"
+        >
+          Log In
+        </button>
       </div>
     </div>
   );
