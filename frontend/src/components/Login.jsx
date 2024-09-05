@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../AuthContext';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -10,6 +11,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
+  const { login, logout, userRole } = useAuth();
 
   useEffect(() => {
     const checkCurrentUser = async () => {
@@ -23,11 +25,12 @@ const Login = () => {
         } catch (error) {
           console.error('Error fetching current user:', error);
           localStorage.removeItem('token');
+          logout(); // Use the logout function from AuthContext
         }
       }
     };
     checkCurrentUser();
-  }, []);
+  }, [logout]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +38,8 @@ const Login = () => {
       const response = await axios.post('http://localhost:3000/login', { username, password });
       if (response.data.accessToken) {
         localStorage.setItem('token', response.data.accessToken);
-        localStorage.setItem('userRole', response.data.role);
+        login(response.data.role); // Use the login function from AuthContext
+        setCurrentUser(response.data); // Set the current user
         if (response.data.role === 'admin') {
           navigate('/admin/teams');
         } else if (response.data.role === 'bar') {
@@ -48,7 +52,7 @@ const Login = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    logout(); // Use the logout function from AuthContext
     setCurrentUser(null);
   };
 

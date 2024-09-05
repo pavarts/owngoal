@@ -9,7 +9,6 @@ const NavBar = ({ isMenuOpen, setIsMenuOpen }) => {
   const { userRole, logout } = useAuth();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
-  const isAuthenticated = !!localStorage.getItem('token');
   const navigate = useNavigate();
   const menuRef = useRef(null);
 
@@ -60,10 +59,10 @@ const NavBar = ({ isMenuOpen, setIsMenuOpen }) => {
         >
           <FontAwesomeIcon icon={faBars} className="w-6 h-6" />
         </button>
-      {isMenuOpen && (
-        <div className="fixed top-[64px] right-0 w-44 z-50 h-full">
-          <div className={`fixed top-[64px] right-0 w-44 h-[calc(100%-64px)] bg-gray-900 transition-transform duration-300 ease-in-out transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-            <Link to="/matches" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
+        {isMenuOpen && (
+          <div className="fixed top-[64px] right-0 w-44 z-50 h-full">
+            <div className={`fixed top-[64px] right-0 w-44 h-[calc(100%-64px)] bg-gray-900 transition-transform duration-300 ease-in-out transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+              <Link to="/matches" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
                 <span className="relative inline-block z-10">
                   Matches
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
@@ -99,7 +98,6 @@ const NavBar = ({ isMenuOpen, setIsMenuOpen }) => {
                 <hr className="my-2 border-gray-500" />
               )}
               
-
               {userRole === 'admin' && (
                 <>
                   <Link to="/admin/teams" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
@@ -164,11 +162,7 @@ const NavBar = ({ isMenuOpen, setIsMenuOpen }) => {
                 </>
               )}
 
-              {(userRole === 'admin' || userRole === 'bar') && (
-                <hr className="my-2 border-gray-500" />
-              )}
-
-              {isAuthenticated && (
+              {userRole && (
                 <Link to="/login" onClick={handleLogout} className="block px-8 py-2 text-lg font-semibold text-red-400 hover:text-red-300 group relative">
                   <span className="relative inline-block z-10">
                     Logout
