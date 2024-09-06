@@ -1,5 +1,9 @@
 require('dotenv').config(); // Load environment variables from .env file
 
+const BASE_URL = process.env.VERCEL_URL 
+  ? `https://${process.env.VERCEL_URL}`
+  : 'http://localhost:3001';
+
 const express = require('express'); //mports the Express module. Node.js uses require to include modules.
 const jwt = require('jsonwebtoken'); //library used to create and verify JSON web tokens (used for auth)
 const bcrypt = require('bcryptjs'); //library for hashing passwords
@@ -25,6 +29,10 @@ const credentials = require('./owngoal-424400-8c5b0a3cae52.json');
 
 const { Op } = require('sequelize');
 
+//sending google emails
+const nodemailer = require('nodemailer');
+
+
 //TODO - validation and sanitization of Data  (use express-validator)
 //TODO - error handling - Add a centralized error handling middleware to handle any uncaught errors and send a consistent response to the client.
 //TODO - logging - log important events and errors
@@ -48,6 +56,51 @@ const authenticateToken = (req, res, next) => {
       next();
     });
   };
+
+//Mail endpoints
+// Configure OAuth2 client
+const OAuth2 = google.auth.OAuth2;
+const oauth2Client = new OAuth2(
+  process.env.GMAIL_CLIENT_ID,
+  process.env.GMAIL_CLIENT_SECRET,
+  "https://developers.google.com/oauthplayground"
+);
+
+oauth2Client.setCredentials({
+  refresh_token: process.env.GMAIL_REFRESH_TOKEN
+});
+
+// Function to send email
+async function sendEmail(to, subject, text) {
+  try {
+    const accessToken = await oauth2Client.getAccessToken();
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: 'admin@owngoalproject.com',
+        clientId: process.env.GMAIL_CLIENT_ID,
+        clientSecret: process.env.GMAIL_CLIENT_SECRET,
+        refreshToken: process.env.GMAIL_REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
+
+    const mailOptions = {
+      from: 'OwnGoal Admin <admin@owngoalproject.com>',
+      to: to,
+      subject: subject,
+      text: text,
+    };
+
+    const result = await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully:', result);
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw error;
+  }
+}
 
 //Login endpoint
 app.post('/login', async (req, res) => {
@@ -95,11 +148,15 @@ app.post('/forgot-password', async (req, res) => {
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour from now
     await user.save();
 
-    const resetUrl = `http://localhost:3001/set-password/${resetToken}`;
-    console.log(`Password reset URL for ${email}: ${resetUrl}`);
-    
-    // TODO: Send email with reset link
-    // await sendEmail(email, 'Password Reset', `Click here to reset your password: ${resetUrl}`);
+    const resetUrl = `${BASE_URL}/set-password/${resetToken}`;
+    await sendEmail(
+      email,
+      'Password Reset',
+      `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+      Please click on the following link, or paste this into your browser to complete the process:\n\n
+      ${resetUrl}\n\n
+      If you did not request this, please ignore this email and your password will remain unchanged.\n`
+    );
 
     res.json({ message: 'Password reset link has been sent to your email' });
   } catch (error) {
@@ -248,13 +305,12 @@ sequelize.sync({ force: process.env.NODE_ENV === 'development' }) // Use force o
   .then(() => {
     console.log('Database tables created successfully');
     app.listen(PORT, () => {
-        console.log(`Server is running on http://localhost:${PORT}`);
+        console.log(`Server is running on ${BASE_URL}`);
     });
   })
   .catch((error) => {
     console.error('Error during database synchronization:', error);
 });
-
 
 
 //**************************************************************************************************************************************************************************************
@@ -1309,13 +1365,16 @@ app.post('/users', authenticateToken, async (req, res) => {
       password: null 
     });
 
-    // Send email with password set link
-    const resetUrl = `http://localhost:3001/set-password/${resetPasswordToken}`;
-    console.log(`Password reset URL: ${resetUrl}`);
-    
-    // TODO: this should be enabled after being hosted!! await sendEmail(username, 'Set Your Password', `Click here to set your password: ${resetUrl}`);
-    
-    console.log(`Email would be sent to ${username} with content: Click here to set your password: ${resetUrl}`);
+    const resetUrl = `${BASE_URL}/set-password/${resetPasswordToken}`;
+    await sendEmail(
+      username,
+      'Set Your Password',
+      `You are receiving this because an account has been created for you on OwnGoal.\n\n
+      Please click on the following link, or paste this into your browser to set your password:\n\n
+      ${resetUrl}\n\n
+      If you did not expect this, please contact the administrator.\n`
+    );
+
     res.status(201).json(newUser);
   } catch (error) {
     console.error('Error creating user:', error);
