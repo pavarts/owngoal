@@ -4,10 +4,10 @@ import NavBar from './components/NavBar.jsx';
 import Home from './pages/Home.jsx';
 import About from './pages/About.jsx';
 import ForBars from './pages/ForBars.jsx';
-import UpcomingMatchesTable from './components/UpcomingMatchesTable.jsx';
 import MatchDetails from './components/MatchDetails.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Login from './components/Login.jsx';
+import ForgotPassword from './components/ForgotPassword';
 import Teams from './components/admin/Teams';
 import Matches from './components/admin/Matches';
 import Bars from './components/admin/Bars';
@@ -56,6 +56,7 @@ function App() {
 
               {/* Account login routes */}
               <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/set-password/:token" element={<SetPassword />} />
 
               {/* Admin routes */}
