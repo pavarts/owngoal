@@ -12,6 +12,13 @@ const NavBar = ({ isMenuOpen, setIsMenuOpen }) => {
   const navigate = useNavigate();
   const menuRef = useRef(null);
 
+  // Open menu by default for bar users
+  useEffect(() => {
+    if (userRole === 'bar') {
+      setIsMenuOpen(true);
+    }
+  }, [userRole, setIsMenuOpen]);
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -39,6 +46,24 @@ const NavBar = ({ isMenuOpen, setIsMenuOpen }) => {
     };
   }, [isMenuOpen]);
 
+  const isActive = (path) => location.pathname === path;
+
+  const NavLink = ({ to, children }) => (
+    <Link
+      to={to}
+      className={`block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative ${
+        isActive(to) ? 'nav-active' : ''
+      }`}
+    >
+      <span className="relative inline-block z-10">
+        {children}
+        <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green ${
+          isActive(to) ? 'w-full' : 'group-hover:w-full'
+        } transition-all`}></span>
+      </span>
+    </Link>
+  );
+
   return (
     <nav className="w-full px-6 py-1 flex justify-between items-center relative shadow-md">
       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 opacity-80"></div>
@@ -62,37 +87,12 @@ const NavBar = ({ isMenuOpen, setIsMenuOpen }) => {
         {isMenuOpen && (
           <div className="fixed top-[64px] right-0 w-44 z-50 h-full">
             <div className={`fixed top-[64px] right-0 w-44 h-[calc(100%-64px)] bg-gray-900 transition-transform duration-300 ease-in-out transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-              <Link to="/matches" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                <span className="relative inline-block z-10">
-                  Matches
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                </span>
-              </Link>
-              <Link to="/teams" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                <span className="relative inline-block z-10">
-                  Teams
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                </span>
-              </Link>
-              <Link to="/bars" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                <span className="relative inline-block z-10">
-                  Bars
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                </span>
-              </Link>
+              <NavLink to="/matches">Matches</NavLink>
+              <NavLink to="/teams">Teams</NavLink>
+              <NavLink to="/bars">Bars</NavLink>
               <hr className="my-2 border-gray-500" />
-              <Link to="/about" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                <span className="relative inline-block z-10">
-                  About
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                </span>
-              </Link>
-              <Link to="/forbars" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                <span className="relative inline-block z-10">
-                  I'm a Bar
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                </span>
-              </Link>
+              <NavLink to="/about">About</NavLink>
+              <NavLink to="/forbars">I'm a Bar</NavLink>
 
               {(userRole === 'admin' || userRole === 'bar') && (
                 <hr className="my-2 border-gray-500" />
@@ -100,65 +100,20 @@ const NavBar = ({ isMenuOpen, setIsMenuOpen }) => {
               
               {userRole === 'admin' && (
                 <>
-                  <Link to="/admin/teams" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                    <span className="relative inline-block z-10">
-                      Teams [A]
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                    </span>
-                  </Link>
-                  <Link to="/admin/matches" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                    <span className="relative inline-block z-10">
-                      Matches [A]
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                    </span>
-                  </Link>
-                  <Link to="/admin/bars" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                    <span className="relative inline-block z-10">
-                      Bars [A]
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                    </span>
-                  </Link>
-                  <Link to="/admin/events" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                    <span className="relative inline-block z-10">
-                      Events [A]
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                    </span>
-                  </Link>
-                  <Link to="/admin/competitions" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                    <span className="relative inline-block z-10">
-                      Competitions [A]
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                    </span>
-                  </Link>
-                  <Link to="/admin/users" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                    <span className="relative inline-block z-10">
-                      Users [A]
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                    </span>
-                  </Link>
+                  <NavLink to="/admin/teams">Teams [A]</NavLink>
+                  <NavLink to="/admin/matches">Matches [A]</NavLink>
+                  <NavLink to="/admin/bars">Bars [A]</NavLink>
+                  <NavLink to="/admin/events">Events [A]</NavLink>
+                  <NavLink to="/admin/competitions">Competitions [A]</NavLink>
+                  <NavLink to="/admin/users">Users [A]</NavLink>
                 </>
               )}
 
               {userRole === 'bar' && (
                 <>
-                  <Link to="/bar/bar-profile" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                    <span className="relative inline-block z-10">
-                      Bar Profile
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                    </span>
-                  </Link>
-                  <Link to="/bar/bar-events" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                    <span className="relative inline-block z-10">
-                      My Events
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                    </span>
-                  </Link>
-                  <Link to="/bar/account-settings" className="block px-8 py-2 text-lg font-semibold text-white hover:text-white group relative">
-                    <span className="relative inline-block z-10">
-                      Account
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-custom-blue to-lime-green group-hover:w-full transition-all"></span>
-                    </span>
-                  </Link>
+                  <NavLink to="/bar/bar-profile">Bar Profile</NavLink>
+                  <NavLink to="/bar/bar-events">My Events</NavLink>
+                  <NavLink to="/bar/account-settings">Account</NavLink>
                 </>
               )}
 

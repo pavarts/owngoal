@@ -9,7 +9,7 @@ const About = () => {
         <Logo />
       </div>
 
-      <hr className="border-t border-white my-8" />
+      <hr className="border-gray-200 my-8" />
       
       <h1 className="text-4xl font-bold mb-8 mt- text-center">About Us</h1>
       
@@ -17,7 +17,7 @@ const About = () => {
         <h2 className="text-3xl font-semibold mb-4">Our Purpose</h2>
         <div className="grid md:grid-cols-3 gap-8">
           <div className="bg-blue-900 bg-opacity-30 p-6 rounded-lg">
-            <h3 className="text-2xl font-bold mb-2">For Soccer Fans</h3>
+            <h3 className="text-2xl font-bold mb-2">For Fans</h3>
             <p>Discover the best places to watch your favorite teams and find a community of other supporters. Never miss a match again!</p>
           </div>
           <div className="bg-blue-900 bg-opacity-30 p-6 rounded-lg">
@@ -56,7 +56,7 @@ const About = () => {
         </p>
       </section>
 
-      <hr className="border-t border-white my-8" />
+      <hr className="border-gray-200 my-8" />
       
       <section className="text-center">
         <h2 className="text-3xl font-semibold mb-4">Get in Touch</h2>
