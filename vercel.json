@@ -11,5 +11,8 @@
         "src": "/(.*)",
         "dest": "backend/server.js"
       }
-    ]
+    ],
+    "env": {
+      "NEXT_PUBLIC_FRONTEND_URL": "https://www.owngoalproject.com"
+    }
   }
