@@ -222,3 +222,10 @@ svg {
   --header-end-color: rgba(147, 197, 253, 0.4);
 }
 
+.nav-active {
+  pointer-events: none;
+}
+
+.nav-active span::after {
+  width: 100%;
+}

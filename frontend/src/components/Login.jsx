@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../AuthContext';
@@ -111,7 +111,7 @@ const Login = () => {
           Login
         </button>
         <div className="mt-4 text-center">
-          <a href="/forgot-password" className="text-blue-500 hover:text-blue-700 text-sm">Forgot my password?</a>
+        <Link to="/forgot-password" className="text-blue-500 hover:text-blue-700 text-sm">Forgot my password?</Link>
         </div>
       </form>
     </div>

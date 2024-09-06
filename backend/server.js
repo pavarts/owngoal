@@ -81,7 +81,34 @@ app.post('/login', async (req, res) => {
   }
 });
 
-//resetting password
+//forgot password
+app.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ where: { username: email } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour from now
+    await user.save();
+
+    const resetUrl = `http://localhost:3001/set-password/${resetToken}`;
+    console.log(`Password reset URL for ${email}: ${resetUrl}`);
+    
+    // TODO: Send email with reset link
+    // await sendEmail(email, 'Password Reset', `Click here to reset your password: ${resetUrl}`);
+
+    res.json({ message: 'Password reset link has been sent to your email' });
+  } catch (error) {
+    console.error('Error in forgot password:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+//set or reset password
 app.post('/set-password/:token', async (req, res) => {
   try {
     const user = await User.findOne({

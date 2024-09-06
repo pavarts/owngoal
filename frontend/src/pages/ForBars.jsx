@@ -41,6 +41,7 @@ const ForBars = () => {
         <i>Tired of showing games to an empty bar?</i>
       </h1>
       <div className="flex flex-wrap -mx-4">
+        
         {/* Left side - Information */}
         <div className="w-full md:w-1/2 px-4 mb-12 md:mb-0">
           <div className="text-white bg-blue-900 bg-opacity-30 backdrop-filter backdrop-blur-sm p-8 rounded-lg shadow-lg">
@@ -75,72 +76,76 @@ const ForBars = () => {
           </div>
         </div>
 
+        
         {/* Right side - Form */}
         <div className="w-full md:w-1/2 px-4">
-          <div className="bg-blue-900 bg-opacity-30 backdrop-filter backdrop-blur-sm p-8 rounded-lg shadow-lg">
+          <div className="bg-blue-900 bg-opacity-30 backdrop-filter backdrop-blur-sm p-8 rounded-lg shadow-lg h-full flex flex-col justify-between">
             {isSubmitted ? (
-              <div className="text-white text-center">
+              <div className="text-white text-center flex flex-col justify-center h-full">
                 <h2 className="text-3xl font-bold mb-4">Thank You for Signing Up!</h2>
                 <p className="text-xl">We've received your information and will be in touch soon to set up your account.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="flex flex-col h-full">
                 <h2 className="text-3xl font-bold mb-6 text-white">Register Your Bar</h2>
-                <div className="mb-4">
-                  <label htmlFor="barName" className="block text-white mb-2">Bar Name</label>
-                  <input
-                    type="text"
-                    id="barName"
-                    name="barName"
-                    value={formData.barName}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 bg-blue-800 bg-opacity-50 text-white rounded"
-                  />
-                </div>
-                <div className="mb-4 flex space-x-4">
-                  <div className="flex-grow">
-                    <label htmlFor="city" className="block text-white mb-2">City</label>
+                <div className="flex-grow">
+                  <div className="mb-4">
+                    <label htmlFor="barName" className="block text-white mb-2">Bar Name</label>
                     <input
                       type="text"
-                      id="city"
-                      name="city"
-                      value={formData.city}
+                      id="barName"
+                      name="barName"
+                      value={formData.barName}
                       onChange={handleChange}
                       required
                       className="w-full px-3 py-2 bg-blue-800 bg-opacity-50 text-white rounded"
                     />
                   </div>
-                  <div className="w-1/3">
-                    <label htmlFor="state" className="block text-white mb-2">State</label>
-                    <select
-                      id="state"
-                      name="state"
-                      value={formData.state}
+                  <div className="mb-4 mt-8 flex space-x-4">
+                    <div className="flex-grow">
+                      <label htmlFor="city" className="block text-white mb-2">City</label>
+                      <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-3 py-2 bg-blue-800 bg-opacity-50 text-white rounded"
+                      />
+                    </div>
+                    <div className="w-1/3">
+                      <label htmlFor="state" className="block text-white mb-2">State</label>
+                      <select
+                        id="state"
+                        name="state"
+                        value={formData.state}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-3 py-2 bg-blue-800 bg-opacity-50 text-white rounded appearance-none"
+                        style={{ paddingRight: '2.5rem', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FFFFFF'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '1em 1em' }}
+                      >
+                        <option value="">Select</option>
+                        {usStates.map(state => (
+                          <option key={state} value={state}>{state}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="mb-6 mt-8">
+                    <label htmlFor="email" className="block text-white mb-2">Email</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleChange}
                       required
                       className="w-full px-3 py-2 bg-blue-800 bg-opacity-50 text-white rounded"
-                    >
-                      <option value="">Select</option>
-                      {usStates.map(state => (
-                        <option key={state} value={state}>{state}</option>
-                      ))}
-                    </select>
+                    />
                   </div>
                 </div>
-                <div className="mb-6">
-                  <label htmlFor="email" className="block text-white mb-2">Email</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 bg-blue-800 bg-opacity-50 text-white rounded"
-                  />
-                </div>
-                <button type="submit" className="w-full bg-lime-green hover:bg-lime-600 text-blue-900 font-bold py-3 px-4 rounded transition duration-300">
+                <button type="submit" className="w-full bg-lime-green hover:bg-lime-600 text-blue-900 font-bold py-3 px-4 rounded transition duration-300 mt-auto">
                   Submit
                 </button>
               </form>
@@ -149,8 +154,10 @@ const ForBars = () => {
         </div>
       </div>
 
+      <hr className="mt-12 border-gray-200" />
+
       {/* Login CTA */}
-      <div className="mt-16 text-center">
+      <div className="mt-8 text-center">
         <h3 className="text-2xl font-semibold text-white mb-4">Already a member?</h3>
         <button 
           onClick={() => navigate('/login')} 
