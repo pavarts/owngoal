@@ -13,6 +13,6 @@
       }
     ],
     "env": {
-      "NEXT_PUBLIC_FRONTEND_URL": "https://www.owngoalproject.com"
+      "NODE_ENV": "production"
     }
   }

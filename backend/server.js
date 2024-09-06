@@ -1,10 +1,11 @@
 require('dotenv').config(); // Load environment variables from .env file
 
-const BASE_URL = process.env.NEXT_PUBLIC_FRONTEND_URL || 
-                 (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 
-                 process.env.LOCAL_URL || 'http://localhost:3001');
+const BASE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://www.owngoalproject.com'
+  : 'http://localhost:3001';
 
-console.log('Current BASE_URL:', BASE_URL);  // Add this for debugging
+console.log('Current BASE_URL:', BASE_URL);
+console.log('Current NODE_ENV:', process.env.NODE_ENV);
 
 const express = require('express'); //mports the Express module. Node.js uses require to include modules.
 const jwt = require('jsonwebtoken'); //library used to create and verify JSON web tokens (used for auth)
