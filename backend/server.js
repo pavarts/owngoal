@@ -6,10 +6,7 @@ const BASE_URL = process.env.VERCEL_URL
     ? 'https://www.owngoalproject.com'
     : 'http://localhost:3001';
 
-console.log('Current BASE_URL:', BASE_URL);
-console.log('Current NODE_ENV:', process.env.NODE_ENV);
-console.log('VERCEL_URL:', process.env.VERCEL_URL);
-
+console.log('Current BASE_URL:', BASE_URL);  // Add this for debugging
 
 const express = require('express'); //mports the Express module. Node.js uses require to include modules.
 const jwt = require('jsonwebtoken'); //library used to create and verify JSON web tokens (used for auth)
