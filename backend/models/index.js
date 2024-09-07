@@ -1,8 +1,30 @@
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('owngoal', 'owngoalowner', 'LosfeliZ67!', {
-  host: 'localhost',
-  dialect: 'postgres'
+
+// Use environment variables for sensitive information
+const sequelize = new Sequelize(process.env.SUPABASE_DB_NAME, process.env.SUPABASE_DB_USER, process.env.SUPABASE_DB_PASSWORD, {
+  host: process.env.SUPABASE_DB_HOST,
+  dialect: 'postgres',
+  port: 6543, 
+  ssl: true,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  }
 });
+
+const testDatabaseConnection = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Connection to the database has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+};
+
+// Call the function
+testDatabaseConnection();
 
 const db = {};
 
@@ -16,7 +38,6 @@ db.Competition = require('./competition')(sequelize, Sequelize.DataTypes);
 db.Event = require('./event')(sequelize, Sequelize.DataTypes);
 db.Match = require('./match')(sequelize, Sequelize.DataTypes);
 db.User = require('./user')(sequelize, Sequelize.DataTypes); 
-
 
 // Load model associations
 Object.keys(db).forEach(modelName => {

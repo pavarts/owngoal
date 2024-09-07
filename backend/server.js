@@ -1,10 +1,14 @@
 require('dotenv').config(); // Load environment variables from .env file
 
-const BASE_URL = process.env.NEXT_PUBLIC_FRONTEND_URL || 
-                 (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 
-                 process.env.LOCAL_URL || 'http://localhost:3001');
+const BASE_URL = process.env.VERCEL_URL 
+  ? `https://${process.env.VERCEL_URL}`
+  : process.env.NODE_ENV === 'production'
+    ? 'https://www.owngoalproject.com'
+    : 'http://localhost:3001';
 
-console.log('Current BASE_URL:', BASE_URL);  // Add this for debugging
+console.log('Current BASE_URL:', BASE_URL);
+console.log('Current NODE_ENV:', process.env.NODE_ENV);
+console.log('VERCEL_URL:', process.env.VERCEL_URL);
 
 const express = require('express'); //mports the Express module. Node.js uses require to include modules.
 const jwt = require('jsonwebtoken'); //library used to create and verify JSON web tokens (used for auth)
@@ -303,9 +307,9 @@ app.get('/admin/matches', authenticateToken, async (req, res) => {
 //**************************************************************************************************************************************************************************************
 
 // Initialize database and start server
-sequelize.sync({ force: process.env.NODE_ENV === 'development' }) // Use force only in development
+sequelize.sync({ force: false }) // Never use force: true in production or with real data
   .then(() => {
-    console.log('Database tables created successfully');
+    console.log('Database tables synced');
     app.listen(PORT, () => {
         console.log(`Server is running on ${BASE_URL}`);
     });
