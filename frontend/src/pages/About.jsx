@@ -62,7 +62,7 @@ const About = () => {
         <h2 className="text-3xl font-semibold mb-4">Get in Touch</h2>
         <p className="text-lg">
           We value your input! If you have any questions, feedback, or just want to chat about soccer, don't hesitate to reach out at{' '}
-          <span className="text-lime-green font-semibold">feedback@owngoal.com</span>.
+          <span className="text-lime-green font-semibold">contact@owngoalproject.com</span>.
         </p>
       </section>
     </div>

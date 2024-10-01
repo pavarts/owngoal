@@ -65,7 +65,7 @@ const ForBars = () => {
               </li>
               <li className="flex items-start">
                 <span className="text-2xl mr-2">🫶🏻</span>
-                <span>Free registration during our beta phase</span>
+                <span>Free registration during our pilot phase</span>
               </li>
             </ul>
             <p className="mt-6 text-xl font-semibold">
