@@ -1494,3 +1494,11 @@ app.put('/change-password', authenticateToken, async (req, res) => {
   }
 });
 
+
+// Serve static files
+app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+// For any other route, serve the React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+});
