@@ -50,5 +50,5 @@ This project is not open for contributions at the moment, as it is part of a per
 ## Contact
 
 **Pavan Yalla**  
-📧 Email: [s.pavan.yalla@gmail.com](mailto:s.pavan.yalla@gmail.com)  
+📧 Email: [admin@owngoalproject.com](mailto:admin@owngoalproject.com)  
 🌐 Project Link: [OwnGoal](https://owngoalproject.com)
