@@ -49,7 +49,7 @@ const Matches = () => {
 
   const fetchMatches = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/matches/all', getAuthHeader());
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/matches/all', getAuthHeader());
       setMatches(response.data);
       setFilteredMatches(response.data);
     } catch (error) {
@@ -59,7 +59,7 @@ const Matches = () => {
 
   const fetchCompetitions = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/competitions', getAuthHeader());
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/competitions', getAuthHeader());
       setCompetitions(response.data);
     } catch (error) {
       console.error('Error fetching competitions:', error);
@@ -68,7 +68,7 @@ const Matches = () => {
 
   const fetchTeamsForCompetition = async (competitionId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/competitions/${competitionId}/teams`, getAuthHeader());
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/competitions/${competitionId}/teams`, getAuthHeader());
       setFilteredTeams(response.data);
     } catch (error) {
       console.error('Error fetching teams for competition:', error);
@@ -159,9 +159,9 @@ const Matches = () => {
   
     try {
       if (editingMatch) {
-        await axios.put(`http://localhost:3000/matches/${editingMatch.id}`, matchData, getAuthHeader());
+        await axios.put(`${process.env.REACT_APP_API_URL}/matches/${editingMatch.id}`, matchData, getAuthHeader());
       } else {
-        await axios.post('http://localhost:3000/matches', matchData, getAuthHeader());
+        await axios.post('${process.env.REACT_APP_API_URL}/matches', matchData, getAuthHeader());
       }
       closeModal();
       fetchMatches();
@@ -174,7 +174,7 @@ const Matches = () => {
 
   const handleDeleteMatch = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/matches/${id}`, getAuthHeader());
+      await axios.delete(`${process.env.REACT_APP_API_URL}/matches/${id}`, getAuthHeader());
       fetchMatches();
     } catch (error) {
       console.error('Error deleting match:', error);

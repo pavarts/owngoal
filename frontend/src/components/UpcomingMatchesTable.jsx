@@ -18,7 +18,7 @@ const UpcomingMatchesTable = ({ teamId }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:3000/matches/upcoming')
+    fetch('${process.env.REACT_APP_API_URL}/matches/upcoming')
       .then(response => response.json())
       .then(data => {
         console.log('Received match data:', data);

@@ -20,7 +20,7 @@ const BarDetails = () => {
   useEffect(() => {
     const fetchBarDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/bars/${place_id}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/bars/${place_id}`);
         const barData = response.data;
         
         // Ensure supportedTeams is an array, even if it's not provided by the API

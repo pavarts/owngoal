@@ -23,7 +23,7 @@ const AllBars = () => {
 
   const fetchBars = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/bars');
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/bars');
       const validBars = response.data.filter(bar => 
         bar.latitude && bar.longitude && 
         !isNaN(parseFloat(bar.latitude)) && !isNaN(parseFloat(bar.longitude))
@@ -41,7 +41,7 @@ const AllBars = () => {
 
   const fetchTeams = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/teams');
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/teams');
       const sortedTeams = response.data.sort((a, b) => a.name.localeCompare(b.name));
       setTeams(sortedTeams);
     } catch (error) {

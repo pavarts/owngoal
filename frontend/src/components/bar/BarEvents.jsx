@@ -34,7 +34,7 @@ const BarEvents = () => {
     const fetchBarInfo = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:3000/bar-profile', {
+        const response = await axios.get('${process.env.REACT_APP_API_URL}/bar-profile', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setBarPlaceId(response.data.place_id);
@@ -52,7 +52,7 @@ const BarEvents = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:3000/bars/${barPlaceId}/events/upcoming`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/bars/${barPlaceId}/events/upcoming`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEvents(response.data);
@@ -68,7 +68,7 @@ const BarEvents = () => {
   }, [barPlaceId]);
   const fetchMatches = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/matches/upcoming');
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/matches/upcoming');
       setMatches(response.data.sort((a, b) => new Date(a.date) - new Date(b.date)));
     } catch (error) {
       console.error('Error fetching matches:', error);
@@ -77,7 +77,7 @@ const BarEvents = () => {
 
   const fetchCompetitions = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/competitions');
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/competitions');
       setCompetitions(response.data);
     } catch (error) {
       console.error('Error fetching competitions:', error);
@@ -121,7 +121,7 @@ const BarEvents = () => {
     try {
       const token = localStorage.getItem('token');
       // Make sure we're sending the event id
-      await axios.put(`http://localhost:3000/events/${currentEvent.id}`, {
+      await axios.put(`${process.env.REACT_APP_API_URL}/events/${currentEvent.id}`, {
         ...updatedEvent,
         id: currentEvent.id
       }, {
@@ -137,7 +137,7 @@ const BarEvents = () => {
   const confirmDeleteEvent = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:3000/events/${currentEvent.id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/events/${currentEvent.id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchEvents();
@@ -155,7 +155,7 @@ const BarEvents = () => {
         match_id: currentMatch.id,
         openingTime: newEvent.earlyOpening ? newEvent.openingTime : null
       };
-      await axios.post(`http://localhost:3000/bars/${barPlaceId}/events`, eventData, {
+      await axios.post(`${process.env.REACT_APP_API_URL}/bars/${barPlaceId}/events`, eventData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchEvents();

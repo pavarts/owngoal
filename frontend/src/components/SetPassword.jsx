@@ -19,7 +19,7 @@ const SetPassword = () => {
       return;
     }
     try {
-      const response = await axios.post(`http://localhost:3000/set-password/${token}`, { password });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/set-password/${token}`, { password });
       setMessage(response.data);
       setTimeout(() => navigate('/login'), 3000);
     } catch (error) {

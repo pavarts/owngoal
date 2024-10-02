@@ -20,7 +20,7 @@ const ForBars = () => {
     e.preventDefault();
     try {
       const timestamp = new Date().toISOString();
-      await axios.post('http://localhost:3000/bar-signup', { ...formData, timestamp });
+      await axios.post('${process.env.REACT_APP_API_URL}/bar-signup', { ...formData, timestamp });
       setIsSubmitted(true);
     } catch (error) {
       console.error('Error submitting form:', error);

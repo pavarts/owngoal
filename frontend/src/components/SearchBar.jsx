@@ -20,7 +20,7 @@ const SearchBar = ({ size = 'large' }) => {
     setIsLoading(true);
     setShowModal(true);
     try {
-      const response = await axios.get(`http://localhost:3000/search?query=${searchQuery}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/search?query=${searchQuery}`);
       setResults(response.data);
     } catch (error) {
       console.error('Search error:', error);

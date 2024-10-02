@@ -34,7 +34,7 @@ const Teams = () => {
 
   const fetchTeams = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/teams?includeHidden=true', getAuthHeader());
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/teams?includeHidden=true', getAuthHeader());
       setTeams(response.data);
       setFilteredTeams(response.data);  // Set filtered teams initially to all teams
     } catch (error) {
@@ -45,7 +45,7 @@ const Teams = () => {
 
   const fetchCompetitions = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/competitions', getAuthHeader());
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/competitions', getAuthHeader());
       setCompetitions(response.data);
     } catch (error) {
       console.error('Error fetching competitions:', error);
@@ -90,9 +90,9 @@ const Teams = () => {
           .filter(id => !isNaN(id)) // Remove any NaN values
       };
       if (editingTeam) {
-        await axios.put(`http://localhost:3000/teams/${editingTeam.id}`, teamData, getAuthHeader());
+        await axios.put(`${process.env.REACT_APP_API_URL}/teams/${editingTeam.id}`, teamData, getAuthHeader());
       } else {
-        await axios.post('http://localhost:3000/teams', teamData, getAuthHeader());
+        await axios.post('${process.env.REACT_APP_API_URL}/teams', teamData, getAuthHeader());
       }
       closeModal();
       fetchTeams();
@@ -102,7 +102,7 @@ const Teams = () => {
   };
   const handleDeleteTeam = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/teams/${id}`, getAuthHeader());
+      await axios.delete(`${process.env.REACT_APP_API_URL}/teams/${id}`, getAuthHeader());
       fetchTeams();
     } catch (error) {
       console.error('Error deleting team:', error);
@@ -153,7 +153,7 @@ const Teams = () => {
     try {
       const team = teams.find(t => t.id === id);
       const updatedTeam = { ...team, hidden: !team.hidden };
-      await axios.put(`http://localhost:3000/teams/${id}`, updatedTeam, getAuthHeader());
+      await axios.put(`${process.env.REACT_APP_API_URL}/teams/${id}`, updatedTeam, getAuthHeader());
       fetchTeams();
     } catch (error) {
       console.error('Error toggling team visibility:', error);

@@ -13,7 +13,7 @@ const BarUpcomingMatchesTable = ({ place_id }) => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/bars/${place_id}/events/upcoming`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/bars/${place_id}/events/upcoming`);
         const sortedEvents = response.data.sort((a, b) => new Date(a.date) - new Date(b.date) || new Date(`1970-01-01T${a.time}Z`) - new Date(`1970-01-01T${b.time}Z`));
         setEvents(sortedEvents);
       } catch (error) {

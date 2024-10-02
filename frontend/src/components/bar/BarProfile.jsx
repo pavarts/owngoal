@@ -15,10 +15,10 @@ const BarProfile = () => {
       try {
         const token = localStorage.getItem('token');
         const [barResponse, teamsResponse] = await Promise.all([
-          axios.get('http://localhost:3000/bar-profile', {
+          axios.get('${process.env.REACT_APP_API_URL}/bar-profile', {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://localhost:3000/teams', {
+          axios.get('${process.env.REACT_APP_API_URL}/teams', {
             headers: { Authorization: `Bearer ${token}` }
           })
         ]);
@@ -126,7 +126,7 @@ const BarProfile = () => {
       if (!place_id) {
         throw new Error('Bar place_id is missing');
       }
-      await axios.put(`http://localhost:3000/bars/${place_id}`, editInfo, {
+      await axios.put(`${process.env.REACT_APP_API_URL}/bars/${place_id}`, editInfo, {
         headers: { Authorization: `Bearer ${token}` },
       });
       

@@ -12,7 +12,7 @@ const TeamDetails = () => {
   useEffect(() => {
     const fetchTeamDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/teams/${id}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/teams/${id}`);
         console.log('Team data:', response.data); // For debugging
         setTeam(response.data);
       } catch (error) {

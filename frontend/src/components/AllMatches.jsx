@@ -17,8 +17,8 @@ const AllMatches = () => {
     const fetchData = async () => {
       try {
         const [matchesResponse, competitionsResponse] = await Promise.all([
-          axios.get('http://localhost:3000/matches/upcoming'),
-          axios.get('http://localhost:3000/competitions')
+          axios.get('${process.env.REACT_APP_API_URL}/matches/upcoming'),
+          axios.get('${process.env.REACT_APP_API_URL}/competitions')
         ]);
         setMatches(matchesResponse.data);
         setCompetitions(competitionsResponse.data);

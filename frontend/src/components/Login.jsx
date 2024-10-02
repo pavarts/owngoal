@@ -18,7 +18,7 @@ const Login = () => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const response = await axios.get('http://localhost:3000/current-user', {
+          const response = await axios.get('${process.env.REACT_APP_API_URL}/current-user', {
             headers: { Authorization: `Bearer ${token}` }
           });
           setCurrentUser(response.data);
@@ -35,7 +35,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/login', { username, password });
+      const response = await axios.post('${process.env.REACT_APP_API_URL}/login', { username, password });
       if (response.data.accessToken) {
         localStorage.setItem('token', response.data.accessToken);
         login(response.data.role); // Use the login function from AuthContext

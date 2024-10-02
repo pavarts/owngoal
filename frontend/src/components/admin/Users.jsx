@@ -25,7 +25,7 @@ const Users = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/users', {
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/users', {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('Users data received:', response.data);  // Add this line
@@ -39,7 +39,7 @@ const Users = () => {
   const fetchBars = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/bars', {
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/bars', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBars(response.data);
@@ -73,11 +73,11 @@ const Users = () => {
       
       if (editingUser) {
         // For editing, we'll keep the existing logic
-        await axios.put(`http://localhost:3000/users/${editingUser.id}`, newUser, { headers });
+        await axios.put(`${process.env.REACT_APP_API_URL}/users/${editingUser.id}`, newUser, { headers });
       } else {
         // For adding a new user, we'll omit the password field
         const { password, ...userWithoutPassword } = newUser;
-        await axios.post('http://localhost:3000/users', userWithoutPassword, { headers });
+        await axios.post('${process.env.REACT_APP_API_URL}/users', userWithoutPassword, { headers });
       }
       
       closeModal();
@@ -90,7 +90,7 @@ const Users = () => {
   const handleDeleteUser = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:3000/users/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchUsers();

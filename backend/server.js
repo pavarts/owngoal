@@ -14,13 +14,24 @@ const express = require('express'); //mports the Express module. Node.js uses re
 const jwt = require('jsonwebtoken'); //library used to create and verify JSON web tokens (used for auth)
 const bcrypt = require('bcryptjs'); //library for hashing passwords
 const app = express(); //Creates an instance of an Express application. This object, app, is used to configure the server and tell it how to handle HTTP requests.
-const PORT = 3000; //Specifies the port number on which the server will listen for requests. localhost at port 3000 is where the server is running
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+//Specifies the port number on which the server will listen for requests. localhost at port 3000 is where the server is running
 const moment = require('moment-timezone');
 const { google } = require('googleapis');
 const sheets = google.sheets('v4');
 
 const cors = require('cors');
-app.use(cors());  // This will allow all cross-origin requests
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://www.owngoalproject.com', // Your production frontend URL
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json()); // Middleware to parse JSON bodies
 const crypto = require('crypto'); //for email sending reset password
 

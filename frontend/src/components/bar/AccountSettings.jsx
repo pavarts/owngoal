@@ -15,7 +15,7 @@ const AccountSettings = () => {
     const fetchUserEmail = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:3000/current-user', {
+        const response = await axios.get('${process.env.REACT_APP_API_URL}/current-user', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setEmail(response.data.username);
@@ -51,7 +51,7 @@ const AccountSettings = () => {
     }
     try {
       const token = localStorage.getItem('token');
-      await axios.put('http://localhost:3000/update-email', { email: newEmail }, {
+      await axios.put('${process.env.REACT_APP_API_URL}/update-email', { email: newEmail }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEmail(newEmail);
@@ -71,7 +71,7 @@ const AccountSettings = () => {
     }
     try {
       const token = localStorage.getItem('token');
-      await axios.put('http://localhost:3000/change-password', {
+      await axios.put('${process.env.REACT_APP_API_URL}/change-password', {
         oldPassword,
         newPassword
       }, {

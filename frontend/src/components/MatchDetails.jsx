@@ -28,12 +28,12 @@ const MatchDetails = () => {
       fetchCoordinatesFromZip(savedZipCode);
     }
 
-    fetch(`http://localhost:3000/matches/${matchId}`)
+    fetch(`${process.env.REACT_APP_API_URL}/matches/${matchId}`)
       .then(response => response.json())
       .then(data => setMatch(data))
       .catch(error => console.error('Error fetching match details:', error));
 
-    fetch(`http://localhost:3000/matches/${matchId}/bars`)
+    fetch(`${process.env.REACT_APP_API_URL}/matches/${matchId}/bars`)
       .then(response => response.json())
       .then(data => setBars(data))
       .catch(error => console.error('Error fetching bars:', error));

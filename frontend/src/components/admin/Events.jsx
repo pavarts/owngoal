@@ -52,7 +52,7 @@ const Events = () => {
 
   const fetchBars = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/bars', getAuthHeader());
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/bars', getAuthHeader());
       setBars(response.data);
     } catch (error) {
       console.error('Error fetching bars:', error);
@@ -61,7 +61,7 @@ const Events = () => {
 
   const fetchEvents = async (place_id) => {
     try {
-      const response = await axios.get(`http://localhost:3000/bars/${place_id}/events`, getAuthHeader());
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/bars/${place_id}/events`, getAuthHeader());
       setEvents(response.data);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -70,7 +70,7 @@ const Events = () => {
 
   const fetchCompetitions = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/competitions', getAuthHeader());
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/competitions', getAuthHeader());
       setCompetitions(response.data);
     } catch (error) {
       console.error('Error fetching competitions:', error);
@@ -79,7 +79,7 @@ const Events = () => {
 
   const fetchMatches = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/matches', getAuthHeader());
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/matches', getAuthHeader());
       setMatches(response.data);
       console.log('Fetched Matches:', response.data);
     } catch (error) {
@@ -166,7 +166,7 @@ const Events = () => {
       if (!newEvent.match_id || errorMessage) {
         return;
       }
-      await axios.post(`http://localhost:3000/bars/${selectedBar}/events`, newEvent, getAuthHeader());
+      await axios.post(`${process.env.REACT_APP_API_URL}/bars/${selectedBar}/events`, newEvent, getAuthHeader());
       fetchEvents(selectedBar);
       closeModal();
     } catch (error) {
@@ -176,7 +176,7 @@ const Events = () => {
 
   const handleDeleteEvent = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/events/${id}`, getAuthHeader());
+      await axios.delete(`${process.env.REACT_APP_API_URL}/events/${id}`, getAuthHeader());
       fetchEvents(selectedBar);
     } catch (error) {
       console.error('Error deleting event:', error);
@@ -190,7 +190,7 @@ const Events = () => {
       if (!newEvent.earlyOpening) {
         updatedEvent.openingTime = null;
       }
-      await axios.put(`http://localhost:3000/events/${updatedEvent.id}`, updatedEvent, getAuthHeader());
+      await axios.put(`${process.env.REACT_APP_API_URL}/events/${updatedEvent.id}`, updatedEvent, getAuthHeader());
       fetchEvents(selectedBar);
       closeModal();
     } catch (error) {

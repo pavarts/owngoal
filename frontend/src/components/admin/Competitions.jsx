@@ -28,7 +28,7 @@ const Competitions = () => {
 
   const fetchCompetitions = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/competitions', getAuthHeader());
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/competitions', getAuthHeader());
       setCompetitions(response.data);
       setFilteredCompetitions(response.data);
     } catch (error) {
@@ -60,9 +60,9 @@ const Competitions = () => {
     e.preventDefault();
     try {
       if (editingCompetition) {
-        await axios.put(`http://localhost:3000/competitions/${editingCompetition.id}`, newCompetition, getAuthHeader());
+        await axios.put(`${process.env.REACT_APP_API_URL}/competitions/${editingCompetition.id}`, newCompetition, getAuthHeader());
       } else {
-        await axios.post('http://localhost:3000/competitions', newCompetition, getAuthHeader());
+        await axios.post('${process.env.REACT_APP_API_URL}/competitions', newCompetition, getAuthHeader());
       }
       closeModal();
       fetchCompetitions();
@@ -73,7 +73,7 @@ const Competitions = () => {
 
   const handleDeleteCompetition = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/competitions/${id}`, getAuthHeader());
+      await axios.delete(`${process.env.REACT_APP_API_URL}/competitions/${id}`, getAuthHeader());
       fetchCompetitions();
     } catch (error) {
       console.error('Error deleting competition:', error);

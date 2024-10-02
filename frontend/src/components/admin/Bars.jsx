@@ -62,7 +62,7 @@ const Bars = () => {
 
   const fetchBars = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/bars?includeHidden=true', getAuthHeader());
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/bars?includeHidden=true', getAuthHeader());
       const barsWithTeams = response.data.map(bar => ({
         ...bar,
         supportedTeams: bar.supportedTeams || []
@@ -75,7 +75,7 @@ const Bars = () => {
   };
   const fetchTeams = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/teams', getAuthHeader());
+      const response = await axios.get('${process.env.REACT_APP_API_URL}/teams', getAuthHeader());
       setTeams(response.data);
     } catch (error) {
       console.error('Error fetching teams:', error);
@@ -132,9 +132,9 @@ const Bars = () => {
         supportedTeams: newBar.supportedTeams.map(team => team.id)
       };
       if (editingBar) {
-        await axios.put(`http://localhost:3000/bars/${editingBar.place_id}`, barData, getAuthHeader());
+        await axios.put(`${process.env.REACT_APP_API_URL}/bars/${editingBar.place_id}`, barData, getAuthHeader());
       } else {
-        await axios.post('http://localhost:3000/bars', barData, getAuthHeader());
+        await axios.post('${process.env.REACT_APP_API_URL}/bars', barData, getAuthHeader());
       }
       closeModal();
       fetchBars();
@@ -145,7 +145,7 @@ const Bars = () => {
 
   const handleDeleteBar = async (place_id) => {
     try {
-      await axios.delete(`http://localhost:3000/bars/${place_id}`, getAuthHeader());
+      await axios.delete(`${process.env.REACT_APP_API_URL}/bars/${place_id}`, getAuthHeader());
       fetchBars();
     } catch (error) {
       console.error('Error deleting bar:', error);
@@ -228,7 +228,7 @@ const Bars = () => {
       setFilteredBars(updatedBars);
   
       const bar = updatedBars.find(b => b.place_id === place_id);
-      await axios.put(`http://localhost:3000/bars/${place_id}`, {
+      await axios.put(`${process.env.REACT_APP_API_URL}/bars/${place_id}`, {
         ...bar,
         supportedTeams: bar.supportedTeams.map(team => team.id)
       }, getAuthHeader());
