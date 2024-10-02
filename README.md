@@ -37,6 +37,7 @@ This project is currently in active development. Key features such as match-to-b
 
 ## Roadmap
 
+- Add competition, team, match, and bar data
 - Add footer
 - Optimize for Safari
 - Optimize for web on mobile
