@@ -8,29 +8,47 @@ const AllTeams = () => {
   const [competitions, setCompetitions] = useState([]);
   const [selectedCompetition, setSelectedCompetition] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTeamsAndCompetitions = async () => {
       try {
         const [teamsResponse, competitionsResponse] = await Promise.all([
-          axios.get('${process.env.REACT_APP_API_URL}/teams'),
-          axios.get('${process.env.REACT_APP_API_URL}/competitions')
+          axios.get(`${process.env.REACT_APP_API_URL}/teams`),
+          axios.get(`${process.env.REACT_APP_API_URL}/competitions`)
         ]);
-        setTeams(teamsResponse.data);
-        setCompetitions(competitionsResponse.data);
+        console.log('Teams response:', teamsResponse.data);
+        console.log('Competitions response:', competitionsResponse.data);
+        if (Array.isArray(teamsResponse.data)) {
+          setTeams(teamsResponse.data);
+        } else {
+          console.error('Teams data is not an array:', teamsResponse.data);
+          setError('Invalid teams data received');
+        }
+        if (Array.isArray(competitionsResponse.data)) {
+          setCompetitions(competitionsResponse.data);
+        } else {
+          console.error('Competitions data is not an array:', competitionsResponse.data);
+          setError('Invalid competitions data received');
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
+        setError('Failed to fetch data');
       }
     };
 
     fetchTeamsAndCompetitions();
   }, []);
 
-  const filteredTeams = teams.filter(team => {
+  const filteredTeams = Array.isArray(teams) ? teams.filter(team => {
     const matchesCompetition = selectedCompetition === '' || team.competitions.some(comp => comp.id === parseInt(selectedCompetition));
     const matchesSearch = team.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCompetition && matchesSearch;
-  });
+  }) : [];
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 text-center">
